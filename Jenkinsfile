@@ -26,7 +26,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerlogin', url: 'https://528757816359.dkr.ecr.us-west-2.amazonaws.com']) {
+                withDockerRegistry([credentialsId: 'dockerlogin', url: '528757816359.dkr.ecr.us-west-2.amazonaws.com/gerrysereal']) {
                     script {
                         app = docker.build('gerrysereal')
                     }
@@ -37,7 +37,7 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    docker.withRegistry('https://528757816359.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
+                    docker.withRegistry('528757816359.dkr.ecr.us-west-2.amazonaws.com/gerrysereal', 'ecr:us-west-2:aws-credentials') {
                         app.push('latest')
                     }
                 }
