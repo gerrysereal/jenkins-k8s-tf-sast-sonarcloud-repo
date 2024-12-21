@@ -26,7 +26,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerlogin', url: ""]) {
+                withDockerRegistry([credentialsId: 'dockerlogin', url: 'https://index.docker.io/v1/']) { // Perbaiki URL ini
                     script {
                         app = docker.build('gerrysereal')
                     }
@@ -35,12 +35,15 @@ pipeline {
         }
 
         stage('Push') {
-          steps {
+            steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerlogin', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin https://index.docker.io/v1/'
-                         docker.withRegistry('https://528757816359.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
-                    app.push('latest')
+                        // Login ke Docker Hub
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                        
+                        // Push ke Docker Hub
+                        app.push('latest') // Pastikan `app` sudah terdefinisi
+                    }
                 }
             }
         }
