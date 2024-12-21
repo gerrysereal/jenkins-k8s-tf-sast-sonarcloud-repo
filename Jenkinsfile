@@ -35,11 +35,12 @@ pipeline {
         }
 
         stage('Push') {
-            steps {
-                script {
-                    docker.withRegistry('https://528757816359.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
-                        app.push('latest')
-                    }
+          steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerlogin', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin https://index.docker.io/v1/'
+                         docker.withRegistry('https://528757816359.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
+                    app.push('latest')
                 }
             }
         }
